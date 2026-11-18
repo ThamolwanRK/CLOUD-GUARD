@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: CloudGuard
+    orgId: 1
+    folder: CloudGuard
+    type: file
+    disableDeletion: true
+    editable: false
+    options:
+      path: /var/lib/grafana/dashboards

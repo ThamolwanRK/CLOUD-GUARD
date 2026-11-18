@@ -1,0 +1,14 @@
+.git
+.gitignore
+.env
+**/.terraform
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.plan
+*.pem
+*.key
+reports
+jenkins_home
+grafana_data
+prometheus_data

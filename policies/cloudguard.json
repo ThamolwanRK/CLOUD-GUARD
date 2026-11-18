@@ -1,0 +1,6 @@
+{
+  "approved_regions": ["ap-south-1"],
+  "approved_dev_instance_types": ["t3.micro", "t3a.micro"],
+  "required_tags": ["Project", "Environment", "Owner", "ManagedBy"],
+  "sensitive_ports": [22, 3389, 5432, 3306, 6379, 9200]
+}

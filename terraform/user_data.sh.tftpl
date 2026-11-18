@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dnf install --assumeyes httpd curl tar
+
+cat >/var/www/html/index.html <<'HTML'
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CloudGuard Demonstration</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 760px; margin: 12vh auto; padding: 0 1.5rem; color: #172033; }
+      h1 { margin-bottom: .4rem; }
+      .status { color: #176b3a; font-weight: 700; }
+      dl { display: grid; grid-template-columns: 9rem 1fr; gap: .6rem; margin-top: 2rem; }
+      dt { font-weight: 700; }
+      dd { margin: 0; }
+    </style>
+  </head>
+  <body>
+    <h1>CloudGuard Demonstration</h1>
+    <p class="status">Deployment successful</p>
+    <p>This workload was provisioned only after Terraform validation and policy evaluation.</p>
+    <dl>
+      <dt>Project</dt><dd>${project_name}</dd>
+      <dt>Environment</dt><dd>${environment}</dd>
+      <dt>Managed by</dt><dd>Terraform</dd>
+    </dl>
+  </body>
+</html>
+HTML
+
+systemctl enable --now httpd
+
+NODE_EXPORTER_VERSION="${node_exporter_version}"
+ARCHIVE="node_exporter-$${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz"
+BASE_URL="https://github.com/prometheus/node_exporter/releases/download/v$${NODE_EXPORTER_VERSION}"
+curl --fail --location --silent --show-error "$${BASE_URL}/$${ARCHIVE}" --output "/tmp/$${ARCHIVE}"
+curl --fail --location --silent --show-error "$${BASE_URL}/sha256sums.txt" --output /tmp/node_exporter_SHA256SUMS
+cd /tmp
+grep " $${ARCHIVE}$" node_exporter_SHA256SUMS | sha256sum --check --strict
+tar --extract --gzip --file "$${ARCHIVE}"
+install --owner=root --group=root --mode=0755 \
+  "node_exporter-$${NODE_EXPORTER_VERSION}.linux-amd64/node_exporter" \
+  /usr/local/bin/node_exporter
+
+useradd --system --no-create-home --shell /sbin/nologin node_exporter || true
+
+cat >/etc/systemd/system/node_exporter.service <<'SERVICE'
+[Unit]
+Description=Prometheus Node Exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
+systemctl daemon-reload
+systemctl enable --now node_exporter
+rm -rf "/tmp/$${ARCHIVE}" /tmp/node_exporter_SHA256SUMS "/tmp/node_exporter-$${NODE_EXPORTER_VERSION}.linux-amd64"

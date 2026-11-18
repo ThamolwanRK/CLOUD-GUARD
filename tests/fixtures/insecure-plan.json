@@ -1,0 +1,42 @@
+{
+  "format_version": "1.2",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "expressions": {
+          "region": {"constant_value": "us-east-1"}
+        }
+      }
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_instance.web",
+      "type": "aws_instance",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "instance_type": "m7i.4xlarge",
+          "root_block_device": [{"encrypted": false}],
+          "metadata_options": [{"http_tokens": "optional"}],
+          "tags_all": {
+            "Name": "bad-name",
+            "Project": "CloudGuard"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_security_group_ingress_rule.ssh",
+      "type": "aws_vpc_security_group_ingress_rule",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "from_port": 22,
+          "to_port": 22,
+          "cidr_ipv4": "0.0.0.0/0"
+        }
+      }
+    }
+  ]
+}

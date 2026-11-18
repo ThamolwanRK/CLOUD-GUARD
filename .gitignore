@@ -1,0 +1,44 @@
+# Terraform working data and state
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.plan
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Credentials and secrets
+.env
+*.pem
+*.key
+*.p12
+*.pfx
+credentials
+secrets/
+.aws/
+
+# Generated reports and runtime data
+reports/*
+!reports/.gitkeep
+monitoring/prometheus/targets/ec2.json
+jenkins_home/
+grafana_data/
+prometheus_data/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/

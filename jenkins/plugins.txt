@@ -1,0 +1,8 @@
+workflow-aggregator
+git
+credentials-binding
+aws-credentials
+pipeline-stage-view
+timestamper
+ws-cleanup
+warnings-ng

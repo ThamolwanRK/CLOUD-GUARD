@@ -1,11 +1,11 @@
 variable "aws_region" {
   description = "Approved AWS region for the academic prototype."
   type        = string
-  default     = "ap-south-1"
+  default     = "us-east-1"
 
   validation {
-    condition     = contains(["ap-south-1"], var.aws_region)
-    error_message = "CloudGuard currently permits only ap-south-1."
+    condition     = contains(["us-east-1", "us-east-2"], var.aws_region)
+    error_message = "CloudGuard currently permits only us-east-1 or us-east-2."
   }
 }
 

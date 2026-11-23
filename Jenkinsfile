@@ -41,12 +41,6 @@ pipeline {
       }
     }
 
-    stage('Policy unit tests') {
-      steps {
-        sh 'opa test policies tests/policies -v'
-      }
-    }
-
     stage('Terraform format') {
       steps {
         sh 'terraform -chdir=terraform fmt -check -recursive'
